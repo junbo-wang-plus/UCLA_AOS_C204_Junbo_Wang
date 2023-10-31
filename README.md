@@ -4,8 +4,8 @@ UCLA C204 Project
 ## Idea
 Data assimilation of satellite data, and low-cost PM2.5 sensor network to produce AOD values with ground-based measurement as reference.
 ## Quirks
-Combine with meteorological conditions
-Cloud-free measurement from satellites only
+Combine with meteorological conditions   
+Cloud-free measurement from satellites only   
 Comparison of results between cloudy and cloud-free results
 
 # Proposal 2
