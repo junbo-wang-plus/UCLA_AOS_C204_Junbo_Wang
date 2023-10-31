@@ -1,6 +1,6 @@
 # jwang.github.io
 UCLA C204 Project
-# Project Proposal
+# Proposal 1
 ## Idea
 Data assimilation of satellite data, and low-cost PM2.5 sensor network to produce AOD values with ground-based measurement as reference.
 ## Quirks
