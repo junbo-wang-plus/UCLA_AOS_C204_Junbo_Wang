@@ -253,12 +253,15 @@ Below are examples of interpolated values of one feature from each of the three 
 
     
 ![Interpolated log(AQI) from the air quality dataset](assets/IMG/grid1.png)  
+<figcaption align = "center"><b> Interpolated log(AQI) from the air quality dataset </b></figcaption>  
     
     
 ![Interpolated daily maximum temperature from the meteorological condition dataset](assets/IMG/grid2.png)  
+<figcaption align = "center"><b> Interpolated daily maximum temperature from the meteorological condition dataset </b></figcaption>  
     
     
 ![Interpolated AOD at 870 nm from the AERONET dataset](assets/IMG/grid3.png)  
+<figcaption align = "center"><b> Interpolated AOD at 870 nm from the AERONET dataset </b></figcaption>  
 
 It is shown that AOD measurements, although covering a wide range of wavelengths, are sparse even for a relatively coarse grid of 0.5 degree resolution. The original plan is to include satellite measurements at higher resolutions to increase the reliability, which is also why snowfall and snow depth were included in the meteorology dataset for their reflectivity interacting with satellite measurements. However, due to the reason mentioned before that satellite measurements are unusable at cloudy conditions and inconsistent across different land types, as stated by  [[1]](#1), and that satellite data products were given in a format difficult to implement in the limited timeframe, only the three datasets which are all produced by local ground-based monitor sites are used. The consequences of these sparse measurements will be discussed later.
 
