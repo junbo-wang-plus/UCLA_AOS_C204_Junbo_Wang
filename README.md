@@ -325,6 +325,6 @@ Environmental Health Perspectives, 118(6), 847-855
 
 <a id="1">[2]</a> 
 Bi, Jinbo (2003). 
-Regression Error Characteristic Curves 
-Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003)
+Regression Error Characteristic Curves   
+Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003)  
 
