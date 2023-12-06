@@ -11,10 +11,8 @@ This effort is driven by the desire to predict daily average air quality represe
 ## Data
 
 Three datasets are used in this project:  
+1.   [Daily AQI][3] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone AQI, and particulate matter AQI values. Monitor site locations are used for interpolation onto a uniform grid. Ozone AQI is ignored and only particulate matter AQI is used as the prediction target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
 
-1. [Daily AQI][3] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone AQI, and particulate matter AQI values. Monitor site locations are used for interpolation onto a uniform grid. Ozone AQI is ignored and only particulate matter AQI is used as the prediction target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
-
-	</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -63,10 +61,9 @@ Three datasets are used in this project:
     </tr>
   </tbody>
 </table>
-</div>
-2. [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
 
-</style>
+2.   [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
+
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -145,9 +142,9 @@ Three datasets are used in this project:
     </tr>
   </tbody>
 </table>
-</div>
 
-3. [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:  
+3.   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:   
+	
 
 	<table>
 	<tr>
@@ -325,6 +322,6 @@ Environmental Health Perspectives, 118(6), 847-855
 
 <a id="1">[2]</a> 
 Bi, Jinbo (2003). 
-Regression Error Characteristic Curves   
-Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003)  
+Regression Error Characteristic Curves  
+Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003)
 
