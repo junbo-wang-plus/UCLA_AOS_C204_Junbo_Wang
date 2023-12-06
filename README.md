@@ -143,10 +143,10 @@ Three datasets are used in this project:
   </tbody>
 </table>
 
-3.   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:   
+3.   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:    
 	
 
-	<table>
+<table>
 	<tr>
 		<th>Date</th>
 	  <th>Latitude</th>
@@ -203,7 +203,7 @@ Three datasets are used in this project:
 	  <th>AOD_681nm</th>
 	  <th>AOD_709nm</th> 
   </tr>
-  </table>
+</table>
 
 After aggregating all input features and trimming off undesired features such as faulty measurements of AOD on some wavelengths, 15 input features were obtained and are listed below. Note that there exist two separate sets of elevation since weather stations providing the second dataset and AERONET instruments providing the third dataset are not placed at the same locations.  
 
