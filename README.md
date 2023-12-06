@@ -1,33 +1,20 @@
-# Estimating Local Air Quality with Ground-based Aerosol Optical Depth Measurements and Meteorological Conditions
+# Estimating Local Daily Average Air Quality with Ground-based Aerosol Optical Depth Measurements and Meteorological Conditions
 
-This report describes the approach of using several machine learning models to estimate local Air Quality Index (AQI) values using Aerosol Optical Depth (AOD) measurements from AeroNET and local meteorological conditions on an interpolated grid.
+This report describes the approach of using machine learning models to estimate local Air Quality Index (AQI) values using sparse ground-based Aerosol Optical Depth (AOD) measurements and local meteorological conditions, all interpolated onto a uniform grid.
 
 ***
 
 ## Introduction 
 
-This effort is driven by the desire to predict daily average air quality represented by AQI using the minimum amount of information, including the most basic local meteorological conditions and  AOD measurements from a sparsely located ground-based instrument network (AERONET), without relying on satellite measurements which are ineffective in cloudy conditions or complex global chemistry models. 
+This effort is driven by the desire to predict daily average air quality represented by particulate matter AQI using the minimum amount of information, including the most basic local meteorological conditions and  AOD measurements from sparsely located ground-based instruments called the Aerosol Robotic Network (AERONET), without relying on satellite measurements which are ineffective in cloudy conditions or complex global chemistry models which are expensive. Furthermore, models are trained separately in different months of 2022 to show the effects of major pollution events such as wildfires on model performance.
 
 ## Data
 
 Three datasets are used in this project:  
 
-1. [Daily AQI][1] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone concentrations, and AQI values. Monitor locations are used for interpolation onto a uniform grid, ozone concentrations are used as an input feature, and log(AQI) values are the regression target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
+1. [Daily AQI][3] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone AQI, and particulate matter AQI values. Monitor site locations are used for interpolation onto a uniform grid. Ozone AQI is ignored and only particulate matter AQI is used as the prediction target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
 
-	<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
+	</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -35,7 +22,6 @@ Three datasets are used in this project:
       <th>Date Local</th>
       <th>Latitude</th>
       <th>Longitude</th>
-      <th>Ozone</th>
       <th>AQI</th>
     </tr>
   </thead>
@@ -45,7 +31,6 @@ Three datasets are used in this project:
       <td>2022-02-28</td>
       <td>30.497478</td>
       <td>-87.880258</td>
-      <td>0.038000</td>
       <td>35</td>
     </tr>
     <tr>
@@ -53,7 +38,6 @@ Three datasets are used in this project:
       <td>2022-03-01</td>
       <td>30.497478</td>
       <td>-87.880258</td>
-      <td>0.037235</td>
       <td>50</td>
     </tr>
     <tr>
@@ -61,7 +45,6 @@ Three datasets are used in this project:
       <td>2022-03-02</td>
       <td>30.497478</td>
       <td>-87.880258</td>
-      <td>0.038235</td>
       <td>51</td>
     </tr>
     <tr>
@@ -69,7 +52,6 @@ Three datasets are used in this project:
       <td>2022-03-03</td>
       <td>30.497478</td>
       <td>-87.880258</td>
-      <td>0.024333</td>
       <td>40</td>
     </tr>
     <tr>
@@ -77,28 +59,13 @@ Three datasets are used in this project:
       <td>2022-03-04</td>
       <td>30.497478</td>
       <td>-87.880258</td>
-      <td>0.049647</td>
       <td>77</td>
     </tr>
   </tbody>
 </table>
 </div>
+2. [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
 
-2. [Meteorological conditions][2] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and aggregated as input features. Similarly, below is an example of the raw dataset:
-
-	<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
 </style>
 <table border="1" class="dataframe">
   <thead>
@@ -107,7 +74,7 @@ Three datasets are used in this project:
       <th>DATE</th>
       <th>LATITUDE</th>
       <th>LONGITUDE</th>
-      <th>ELEVATION</th>
+      <th>Elevation (weather)</th>
       <th>PRCP</th>
       <th>SNOW</th>
       <th>SNWD</th>
@@ -180,9 +147,8 @@ Three datasets are used in this project:
 </table>
 </div>
 
-4. [Aerosol Optical Depths][3] measured by a network of ground-based instruments called the Aerosol Robotic Network (AERONET) covering a range of wavelengths are the final components of input features (example shown below).
+3. [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:  
 
-	`AOD table`
 	<table>
 	<tr>
 		<th>Date</th>
@@ -190,7 +156,7 @@ Three datasets are used in this project:
 	</tr>
 	<tr>
 		<th>Longitude</th>
-	  <th>Site_Elevation(m)</th>
+	  <th>Elevation (AERONET)</th>
 	</tr>
 	<tr>
 		<th>AOD_1640nm</th>
@@ -242,100 +208,123 @@ Three datasets are used in this project:
   </tr>
   </table>
 
-After aggregating all input features and trimming off undesired features such as faulty measurements of AOD on some wavelengths, 16 input features were obtained and are shown below. Note that "ELEVATION" references monitor sites elevation of meteorological data while "Site_Elevation(m)" refers those of AOD instruments.
+After aggregating all input features and trimming off undesired features such as faulty measurements of AOD on some wavelengths, 15 input features were obtained and are listed below. Note that there exist two separate sets of elevation since weather stations providing the second dataset and AERONET instruments providing the third dataset are not placed at the same locations.  
 
 <table>
     <tr>
-		<th>Ozone</th>
-		<th>ELEVATION</th>
+		<th>Elevation (weather)</th>
+		<th>PRCP</th>
     </tr>
 	<tr>
-		<th>PRCP</th>
 		<th>SNOW</th>
+		<th>SNWD</th>
 	</tr>
 	<tr>
-		<th>SNWD</th>
 		<th>TMAX</th>
+		<th>TMIN</th>
   	</tr>
 	<tr>
-		<th>TMIN</th>
-		<th>Site_Elevation(m)</th>
-	</tr>
-	<tr>
+		<th>Elevation (AERONET)</th>
 		<th>AOD_1640nm</th>
+	</tr>
+	<tr>
 		<th>AOD_1020nm</th>
-	</tr>
-	<tr>
 		<th>AOD_870nm</th>
+	</tr>
+	<tr>
 		<th>AOD_675nm</th>
-	</tr>
-	<tr>
 		<th>AOD_500nm</th>
-		<th>AOD_440nm</th>
 	</tr>
 	<tr>
+		<th>AOD_440nm</th>
 		<th>AOD_380nm</th>
+	</tr>
+	<tr>
 		<th>AOD_340nm</th>
 	</tr>
 </table>
 
-All three datasets have a similar format with monitor site locations and measurement dates. The three datasets for the entirety of 2022 were downloaded but only data from March 1 to May 1 are used due to memory limitations.
+All three datasets have a similar format with monitor site locations and measurement dates. The three datasets for the entirety of 2022 were downloaded but only data from two whole months were used for one training due to memory limitations.  
 
-Data preprocessing includes minor renaming, reformatting, and replacing invalid values before looping through the selected dates. In each loop, only the data on the specified date in each dataset are selected and separately interpolated onto a uniform grid covering the mainland U.S. with a resolution of 0.5 degrees. After each iteration, the interpolated values for each feature are flattened to a 1-D vector and appended with those from other dates. Hence the number of training instances without trimming off invalid data is the number of individual cells on the uniform grid multiplied by the number of days, which in this case is 272,800 instances. The preprocessing loop is shown below:
+Data preprocessing includes renaming, reformatting, and ignoring invalid values before looping through the selected dates. In each loop, only the data on the specified date in each dataset are selected and separately interpolated onto uniform grids covering the mainland U.S. with a resolution of 0.5 degrees. After each iteration, the interpolated and gridded values for each feature are flattened to a 1-D vector and appended with those from other dates. Hence the size of the training set is the number of individual cells on the uniform grid multiplied by the number of days. The three datasets were downloaded for the entirety of 2022 but only two whole months of data were used for one training session due to memory limitations. Hence each training set includes 272,800 instances and 15 features. The training set is split into 190,960 training instances and 81,840 for verification.  
 
-[1]: https://aqs.epa.gov/aqsweb/airdata/download_files.html#AQI
-[2]: https://www.ncei.noaa.gov/maps/daily/
-[3]: https://aeronet.gsfc.nasa.gov/
+[3]: https://aqs.epa.gov/aqsweb/airdata/download_files.html#AQI
+[4]: https://www.ncei.noaa.gov/maps/daily/
+[5]: https://aeronet.gsfc.nasa.gov/
 
-```python
-preprocessing loop
-```
-
-Below are examples of interpolated values of one feature from each of the three datasets for March 1 using the "nearest" method plotted onto the uniform grid:
+Below are examples of interpolated values of one feature from each of the three datasets for March 1 using the "nearest" method plotted onto the uniform grid:  
 
     
-![Interpolated log(AQI) from the air quality dataset](assets/IMG/output_6_0.png)
+![Interpolated log(AQI) from the air quality dataset](assets/IMG/grid1.png)  
     
     
-![Interpolated daily maximum temperature from the meteorological condition dataset](assets/IMG/output_6_1.png)
+![Interpolated daily maximum temperature from the meteorological condition dataset](assets/IMG/grid2.png)  
     
     
-![Interpolated AOD at 870 nm from the AERONET dataset](assets/IMG/output_6_2.png)
+![Interpolated AOD at 870 nm from the AERONET dataset](assets/IMG/grid3.png)  
 
-It is shown that AOD measurements, although covering a wide range of wavelengths, are sparse even for a relatively coarse grid of 0.5 degree resolution. The original plan was to include satellite measurements at higher resolutions to increase the reliability. However, due to the reason mentioned before that satellite measurements are unusable at cloudy conditions and inconsistent across different land types, (reference) and that satellite data products were given in a format difficult to implement in this project, only the three datasets which are all produced by local ground-based monitor sites are used. The consequences of these sparse measurements will be discussed later.
+It is shown that AOD measurements, although covering a wide range of wavelengths, are sparse even for a relatively coarse grid of 0.5 degree resolution. The original plan is to include satellite measurements at higher resolutions to increase the reliability, which is also why snowfall and snow depth were included in the meteorology dataset for their reflectivity interacting with satellite measurements. However, due to the reason mentioned before that satellite measurements are unusable at cloudy conditions and inconsistent across different land types, as stated by  [[1]](#1), and that satellite data products were given in a format difficult to implement in the limited timeframe, only the three datasets which are all produced by local ground-based monitor sites are used. The consequences of these sparse measurements will be discussed later.
 
 ## Model prediction
-After the numerous testing, the only model capable of providing reliable results is the decision tree regressor from the sci-kit learn library. The model is incorporated into a pipeline with a standard scaler and the process is shown below:
+Here the performance of a model trained by the data from March 1 to May 1 2022 represented by the REC curve is shown below. Note that the tolerance used here is $\epsilon$ - incentive loss defined by [[2]](#2). The RMSE of scaled data for the decision tree model is 0.270.  
 
-```python
-from sklearn.model_selection import train_test_split
+![](assets/IMG/3_4_REC.png)  
 
-target = 'AQI'
+It is shown that even with a limited amount of features and sparse measurements, all four models, including linear regression, decision tree regression, artificial neural network, and ensemble method, can produce reliable predictions of local air quality, with the decision tree model having the best performance.  
 
-X_data=combined_df.drop([target],axis=1).values
-y_data=combined_df[target].values
-y_data = y_data.reshape(-1,1)
+The feature importance from the decision tree model is shown below:  
 
-test_size = 0.3
-X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=test_size)
+![](assets/IMG/3_4_feature.png)  
 
-from sklearn.tree import DecisionTreeRegressor
+It is shown that snowfall and snow depth are the least important features for predicting air quality with purely ground-based measurements, as expected for the reason stated before. It can also be seen that meteorological conditions are generally more important the AOD measurements, which inspired training a new “slim” model on only the meteorology dataset and the RMSE of this new model is 0.263 and its REC curve and feature importance are shown below:  
 
-pipe2 = Pipeline([('scaler', StandardScaler()), ('regressor', DecisionTreeRegressor())])
-pipe2.fit(X_train, y_train)
-y_pred_tree = pipe2.predict(X_test)
-```
-The RMSE of scaled data for this model is `0.287` and its REC is shown below:
-```
-REC
-```
-It is shown that even with a limited amount of features and sparse measurements of AOD, the decision tree model can reliably produce accurate results of AQI, proving it possible to estimate local air quality without too much high-resolution satellite measurements as long as an appropriate model is used.
+![](assets/IMG/slim_3_4_REC.png)  
+
+![](assets/IMG/slim_3_4_feature.png)  
+
+These results show that during March and April of 2022, meteorological conditions are indeed the dominant factors for predicting air quality since the increase in model prediction brought by the addition of AOD data is minimal.  
+
+To see how major pollution events can affect model performance, data from June and July of 2022 (months with the most burnt acres due to wildfires across the U.S.) are used for training a new pair of models, one with the full feature set and the other with a “slim” version.  
+
+The RMSE for the full-feature decision tree model is 0.460 and 0.444 for the “slim” decision tree. Their REC curves and feature importances are shown below:  
+
+![](assets/IMG/6_7_REC.png)  
+
+![](assets/IMG/slim_6_7_REC.png)  
+
+![](assets/IMG/6_7_feature.png)  
+
+![](assets/IMG/slim_6_7_feature.png)  
+
+It can be seen that with more pollution from wildfire, the addition of actual particulate matter measurements in the form of AOD, even though they are sparse, can increase model performance significantly. In other words, when the pollution level varies more due to pollution, relying on only meteorology to predict air quality is insufficient, as expected.  
+
 ## Discussions
-Besides the successful decision tree regression, linear regression, artificial neural network, random forest, and deep neural network models are also tested and they all produced unacceptable results. RECs for all models tested are shown below:
+From all four examples shown above, decision tree models always outperform others, even the ensemble model which includes the decision tree model. This can be attributed to decision tree model’s better handling of nonlinear behavior.  
 
-It is unclear why decision tree model outperforms other models by such a significant margin besides its known advantage in nonlinear behavior. The poor performance of other models can be attributed to the interpolation method used, which introduces a significant amount of errors especially in large regions with sparsely located monitor sites. Adding this to the already sparse AOD measurements even in more populated areas, it is clear how simple models such as linear regression will not produce reliable results especially when there is not enough physically relevant features to PM2.5 except for AOD measurements. 
+Furthermore, all four examples show that elevation is the dominant factor in AQI, followed by meteorology, with direct particulate matter measurement being only important during months when there are more pollution events.  
+
+The effect of elevation is apparent since the higher the elevation, the further the site is from the mixing height or atmospheric boundary layer, which increases particulate matter concentration. The dominant effect of meteorology during cleaner months can also be explained since wet deposition is the most effective sink for particulate matters, assuming a relatively static source. On the other hand, during months with more wildfires, this background source of particulate matter is more variable hence direct measurements such as AODs can greatly improve model performance, even if they are very sparse.  
+
+To further compare the effect of different months of the year, the full-feature decision tree model trained on data from March and April is used to predict air quality during June and July and the REC curve is shown below:  
+
+![](assets/IMG/cross_1.png)  
+
+The REC curve for the reverse operation where the model trained on June and July data is used to predict air quality during March and April is:  
+
+![](assets/IMG/cross_2.png)  
+
+The drop in model performance in both cross-testing cases further prove that in order to obtain a comprehensive model, the selection of training data needs to consider seasonal variation to account for the variable likelihood of pollution events during different parts of the year.  
+
+In conclusion, several machine learning models were used to estimate local air quality from AOD measurements and meteorological conditions. The decision tree model proved to have the best performance. Results from models trained on data obtained from different months of 2022 show that the daily average AQI is dominated by meteorological conditions and elevation. AOD measurements are important during the months when there are more pollution events.  
+
 ## References
-[1] DALL-E 3
+<a id="1">[1]</a> 
+van Donkelaar, Aaron (2010). 
+Global Estimates of Ambient Fine Particulate Matter Concentrations from Satellite-Based Aerosol Optical Depth: Development and Application   
+Environmental Health Perspectives, 118(6), 847-855   
 
-[back](./)
+<a id="1">[2]</a> 
+Bi, Jinbo (2003). 
+Regression Error Characteristic Curves 
+Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003)
 
