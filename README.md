@@ -60,7 +60,7 @@ Three datasets are used in this project:
       <td>77</td>
     </tr>
   </tbody>
-</table>
+</table>  
 
 -   [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
 
@@ -141,7 +141,7 @@ Three datasets are used in this project:
       <td>36.0</td>
     </tr>
   </tbody>
-</table>
+</table>  
 
 -   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. A portion of this dataset is shown here:    
 	
@@ -337,7 +337,7 @@ Three datasets are used in this project:
       <td>-999.0</td>
     </tr>
   </tbody>
-</table>
+</table>  
 
 After aggregating all input features and trimming off undesired features such as faulty measurements of AOD on some wavelengths, 15 input features were obtained and are listed below. Note that there exist two separate sets of elevation since weather stations providing the second dataset and AERONET instruments providing the third dataset are not placed at the same locations.  
 
@@ -345,35 +345,29 @@ After aggregating all input features and trimming off undesired features such as
     <tr>
 		<th>Elevation (weather)</th>
 		<th>PRCP</th>
-    </tr>
-	<tr>
 		<th>SNOW</th>
 		<th>SNWD</th>
-	</tr>
-	<tr>
 		<th>TMAX</th>
+    </tr>
+	<tr>	
+	</tr>
+	<tr>	
 		<th>TMIN</th>
-  	</tr>
-	<tr>
 		<th>Elevation (AERONET)</th>
 		<th>AOD_1640nm</th>
-	</tr>
-	<tr>
 		<th>AOD_1020nm</th>
 		<th>AOD_870nm</th>
+  	</tr>
+	<tr>
 	</tr>
 	<tr>
 		<th>AOD_675nm</th>
 		<th>AOD_500nm</th>
-	</tr>
-	<tr>
 		<th>AOD_440nm</th>
 		<th>AOD_380nm</th>
-	</tr>
-	<tr>
 		<th>AOD_340nm</th>
 	</tr>
-</table>
+</table>  
 
 All three datasets have a similar format with monitor site locations and measurement dates. The three datasets for the entirety of 2022 were downloaded but only data from two whole months were used for one training due to memory limitations.  
 
