@@ -443,7 +443,7 @@ The REC curve for the reverse operation where the model trained on June and July
 
 The drop in model performance in both cross-testing cases further prove that in order to obtain a comprehensive model, the selection of training data needs to consider seasonal variation to account for the variable likelihood of pollution events during different parts of the year.  
 
-In conclusion, several machine learning models were used to estimate local air quality from AOD measurements and meteorological conditions. The decision tree model proved to have the best performance. Results from models trained on data obtained from different months of 2022 show that the daily average AQI is dominated by meteorological conditions and elevation. AOD measurements are important during the months when there are more pollution events.  
+In conclusion, several machine learning models were used to estimate local daily average air quality from ground-based AOD measurements and meteorological conditions. The decision tree model proved to have the best performance. Results from models trained on data obtained from different months of 2022 show that the daily average AQI is mainly affected by meteorological conditions and elevation. AOD measurements are more important during the months when there are more pollution events.  
 
 ## References
 <a id="1">[1]</a> 
