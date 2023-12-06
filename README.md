@@ -11,7 +11,7 @@ This effort is driven by the desire to predict daily average air quality represe
 ## Data
 
 Three datasets are used in this project:  
-1.   [Daily AQI][3] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone AQI, and particulate matter AQI values. Monitor site locations are used for interpolation onto a uniform grid. Ozone AQI is ignored and only particulate matter AQI is used as the prediction target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
+-   [Daily AQI][3] summary in the year 2022 provided by the EPA includes the monitor site locations, ozone AQI, and particulate matter AQI values. Monitor site locations are used for interpolation onto a uniform grid. Ozone AQI is ignored and only particulate matter AQI is used as the prediction target due to the wide range of raw AQI values. A cleaned up snippet of this dataset is shown below:   
 
 <table border="1" class="dataframe">
   <thead>
@@ -62,7 +62,7 @@ Three datasets are used in this project:
   </tbody>
 </table>
 
-2.   [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
+-   [Meteorological conditions][4] including monitor site locations, daily averaged precipitation, snow depth, snowfall, maximum temperature, and minimum temperature provided by NOAA are interpolated in the same manner as AQI and used as input features. Similarly, below is an example of the raw dataset:  
 
 <table border="1" class="dataframe">
   <thead>
@@ -143,66 +143,200 @@ Three datasets are used in this project:
   </tbody>
 </table>
 
-3.   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. The features from this dataset are listed below:    
+-   [Aerosol Optical Depths][5] measured by AERONET covering a range of wavelengths are the final components of input. A portion of this dataset is shown here:    
 	
 
-<table>
-	<tr>
-		<th>Date</th>
-	  <th>Latitude</th>
-	</tr>
-	<tr>
-		<th>Longitude</th>
-	  <th>Elevation (AERONET)</th>
-	</tr>
-	<tr>
-		<th>AOD_1640nm</th>
-	  <th>AOD_1020nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_870nm</th>
-	  <th>AOD_865nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_779nm</th>
-	  <th>AOD_675nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_667nm</th>
-	  <th>AOD_620nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_560nm</th>
-	  <th>AOD_555nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_551nm</th>
-	  <th>AOD_532nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_531nm</th>
-	  <th>AOD_510nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_500nm</th>
-	  <th>AOD_490nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_443nm</th>
-	  <th>AOD_440nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_412nm</th>
-	  <th>AOD_400nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_380nm</th>
-	  <th>AOD_340nm</th>
-  </tr>
-	<tr>
-	  <th>AOD_681nm</th>
-	  <th>AOD_709nm</th> 
-  </tr>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Elevation (AERONET)</th>
+      <th>AOD_1640nm</th>
+      <th>AOD_1020nm</th>
+      <th>AOD_870nm</th>
+      <th>AOD_865nm</th>
+      <th>AOD_779nm</th>
+      <th>AOD_675nm</th>
+      <th>AOD_667nm</th>
+      <th>AOD_620nm</th>
+      <th>AOD_560nm</th>
+      <th>AOD_555nm</th>
+      <th>AOD_551nm</th>
+      <th>AOD_532nm</th>
+      <th>AOD_531nm</th>
+      <th>AOD_510nm</th>
+      <th>AOD_500nm</th>
+      <th>AOD_490nm</th>
+      <th>AOD_443nm</th>
+      <th>AOD_440nm</th>
+      <th>AOD_412nm</th>
+      <th>AOD_400nm</th>
+      <th>AOD_380nm</th>
+      <th>AOD_340nm</th>
+      <th>AOD_681nm</th>
+      <th>AOD_709nm</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2022-12-30</td>
+      <td>-62.663056</td>
+      <td>-60.389444</td>
+      <td>5.0</td>
+      <td>0.049188</td>
+      <td>0.059211</td>
+      <td>0.062151</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.066013</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.073626</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.083497</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.079924</td>
+      <td>0.082425</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2022-03-01</td>
+      <td>40.451900</td>
+      <td>-3.723950</td>
+      <td>680.0</td>
+      <td>-999.000000</td>
+      <td>0.050193</td>
+      <td>0.056500</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.067353</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.095629</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.115899</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.140979</td>
+      <td>0.151545</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2022-03-02</td>
+      <td>40.451900</td>
+      <td>-3.723950</td>
+      <td>680.0</td>
+      <td>-999.000000</td>
+      <td>0.020488</td>
+      <td>0.023579</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.028519</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.040038</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.047169</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.058094</td>
+      <td>0.058613</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2022-03-05</td>
+      <td>40.451900</td>
+      <td>-3.723950</td>
+      <td>680.0</td>
+      <td>-999.000000</td>
+      <td>0.033906</td>
+      <td>0.037883</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.044933</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.064754</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.079289</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.097636</td>
+      <td>0.102812</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2022-03-06</td>
+      <td>40.451900</td>
+      <td>-3.723950</td>
+      <td>680.0</td>
+      <td>-999.000000</td>
+      <td>0.019403</td>
+      <td>0.023290</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.030635</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.045460</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.056093</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+      <td>0.069005</td>
+      <td>0.071608</td>
+      <td>-999.0</td>
+      <td>-999.0</td>
+    </tr>
+  </tbody>
 </table>
 
 After aggregating all input features and trimming off undesired features such as faulty measurements of AOD on some wavelengths, 15 input features were obtained and are listed below. Note that there exist two separate sets of elevation since weather stations providing the second dataset and AERONET instruments providing the third dataset are not placed at the same locations.  
